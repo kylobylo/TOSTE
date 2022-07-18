@@ -75,7 +75,6 @@ int main() {
         return 0;
     }
 
-
     cursor.setTexture(cursorTexture);
 
     Mouse::setPosition(mousePos);
@@ -244,7 +243,6 @@ int main() {
                 #ifdef DEBUG
                     std::cout << "ERROR FAILED TO LOAD MAP\n";
                 #endif
-                return 0;
             } else {
                 std::cout << "Loaded from level.dat\n";
             }
