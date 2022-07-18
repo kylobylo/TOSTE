@@ -50,3 +50,5 @@ class Button : public sf::Drawable, public sf::Transformable{
         void draw(sf::RenderTarget& rtarget, sf::RenderStates states) const;
 
 };
+
+

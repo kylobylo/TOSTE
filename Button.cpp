@@ -225,3 +225,4 @@ Vector2i Button::getCenter() {
     #endif
     return fileButtonCenter;
 };
+

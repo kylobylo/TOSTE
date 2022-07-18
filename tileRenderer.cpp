@@ -124,6 +124,7 @@ bool tileRenderer::renderTile(std::string fileName, sf::Vector2i tileSize, sf::V
 };
 
 
+
 void tileRenderer::draw(sf::RenderTarget& rtarget, sf::RenderStates states) const  {
 
     //Draws each layer in order so the last layer to be drawn is on top
@@ -340,6 +341,9 @@ int tileSelector::selectTile(int tileNumber, Vector2i tileSize, short scrollPos,
 
 
 
+
+
+
 void tileSelector::draw(sf::RenderTarget& rtarget, sf::RenderStates states) const {
 
     states.texture = &tileTex;
@@ -351,3 +355,39 @@ void tileSelector::draw(sf::RenderTarget& rtarget, sf::RenderStates states) cons
     rtarget.draw(tileBoxBottom);
 
 };
+
+
+
+
+
+background::background(std::string filename, Vector2i window) {
+    if(!backgroundTex.loadFromFile(filename)) {
+        std::cout << "ERROR FAILED TO LOAD FROM FILE FOR BACKGROUND!\n";
+    }
+
+    windowSize = window;
+}
+
+bool background::set(sf::Vector2i cameraPos) {
+    actualBackground.setPrimitiveType(Quads);
+    actualBackground.resize(4);
+
+    actualBackground[0].position = Vector2f(0, 12);
+    actualBackground[1].position = Vector2f(0, windowSize.y);
+    actualBackground[2].position = Vector2f(windowSize.x * 0.836601307, windowSize.y);
+    actualBackground[3].position = Vector2f(windowSize.x * 0.836601307, 12);
+
+    actualBackground[0].texCoords = Vector2f(0, 0);
+    actualBackground[1].texCoords = Vector2f(0, backgroundTextureSize.y);
+    actualBackground[2].texCoords = Vector2f(backgroundTextureSize.x, backgroundTextureSize.y);
+    actualBackground[3].texCoords = Vector2f(backgroundTextureSize.x, 0);
+
+    return true;
+};
+
+
+void background::draw(sf::RenderTarget& rtarget, sf::RenderStates states) const {
+
+    states.texture = &backgroundTex;
+    rtarget.draw(actualBackground, states);
+}

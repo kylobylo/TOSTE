@@ -1,7 +1,9 @@
 #include "userInterface.hpp"
 using namespace sf;
 
-UI::UI(tileRenderer* ptrTileRenderer) {
+UI::UI(tileRenderer* ptrTileRenderer, RenderWindow *window) {
+
+    tileWindow = window;
 
     fileButton.setPosition(0, 0);
     fileButton.setText("File");
@@ -44,23 +46,36 @@ UI::UI(tileRenderer* ptrTileRenderer) {
 
 };
 
-bool UI::UIPeriodic(Vector2i* inMousePos){
+bool UI::UIPeriodic(){
 
-    pMousePos = inMousePos;
+    mousePos.x = Mouse::getPosition(*tileWindow).x;
+    mousePos.y = Mouse::getPosition(*tileWindow).y;
 
+    pMousePos = &mousePos;
+
+    //Buttons automatically open menus of UI items assigned to them.
     fileButton.buttonClicked(*pMousePos);
     editButton.buttonClicked(*pMousePos);
     if (loadButton.buttonClicked(*pMousePos) && fileButton.menuOpened) {
         pTRender->loadTile("level.dat");
-    }
-    if(saveButton.buttonClicked(*pMousePos) && fileButton.menuOpened) {
+        debouncer = 0;
+        return false;
+    } else if(saveButton.buttonClicked(*pMousePos) && fileButton.menuOpened) {
         pTRender->saveTile("level.dat");
-    }
-    if(newButton.buttonClicked(*pMousePos) && fileButton.menuOpened) {
+        debouncer = 0;
+        return false;
+    } else if(newButton.buttonClicked(*pMousePos) && fileButton.menuOpened) {
         pTRender->newMap();
+        debouncer = 0;
+        return false;
+    } else if(Mouse::isButtonPressed(Mouse::Left) && debouncer > 10) {
+        return true;
     }
 
-    return true;
+    debouncer++;
+
+    return false;
+
 }
 
 void UI::draw(sf::RenderTarget& rtarget, sf::RenderStates states) const {

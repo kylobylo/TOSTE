@@ -14,9 +14,12 @@ int main() {
     short scrollPos = 0;
     short layer = 2;
     unsigned short addedTile = 2;
+    //Required to differentiate UI drawing.  See userInterface.hpp for more details
+    bool leftClicked;
     sf::Clock clock;
     Vector2i tileFileResolution(640, 640);
     Vector2i tileSelectorWindowStart(514, 2);
+    const Vector2i windowSize(612, 300);
 
     //Various click iterations which keep make the buttons work all the time.
     short focusIterations;
@@ -24,13 +27,16 @@ int main() {
     short grabIterations;
     bool wasGrabbed = false;
 
-    RenderWindow tileWindow(VideoMode(612, 300), "Tilemap editor");
+    RenderWindow tileWindow(VideoMode(windowSize.x, windowSize.y), "Tilemap editor");
     tileWindow.setFramerateLimit(60);
     View tileView(Vector2f(306, 144), Vector2f(612, 288));
+    View backgroundView(Vector2f(306, 150), Vector2f(612, 300));
     View userInterfaceView(Vector2f(306, 150), Vector2f(612, 300));
 
 
     Sprite cursor;
+
+    std::string backgroundFileName;
 
     Sprite selectCursor;
 
@@ -49,8 +55,18 @@ int main() {
 
     tileSelector ts;
 
-    UI userInterface(&map);
+    UI userInterface(&map, &tileWindow);
 
+
+    
+    background deBackground(backgroundFileName, windowSize);
+
+    if(backgroundFileName == std::string()) {
+        #ifdef DEBUG
+         std::cout << "NO BACKGROUND FILE PROVIDED\n";
+        #endif
+    }
+    
 
 
 
@@ -100,6 +116,8 @@ int main() {
                 }
 
                 tileWindow.setMouseCursorVisible(focus);
+
+                leftClicked = userInterface.UIPeriodic();
 
 
                 //Switch between layers
@@ -159,8 +177,7 @@ int main() {
                     map.newMap();
                 }
 
-                mousePos.x = Mouse::getPosition(tileWindow).x;
-                mousePos.y = Mouse::getPosition(tileWindow).y;
+                mousePos = userInterface.mousePos;
 
                 cursor.setPosition(mousePos.x, mousePos.y);
 
@@ -169,8 +186,8 @@ int main() {
                     std::cout << "Current Mouse Pos: " << Mouse::getPosition().x << ", " << Mouse::getPosition().y << std::endl;
                 #endif
 
-                //Checks what tile the mouse is on
-                if (Mouse::isButtonPressed(Mouse::Left) && mousePos.y > UIHeight && mousePos.x < tileSelectorWindowStart.x) {
+                //Checks what tile the mouse is on for the drawer
+                if (leftClicked && mousePos.y > UIHeight && mousePos.x < tileSelectorWindowStart.x) {
                     #ifdef MOUSEDEBUG
                         std::cout << "Mouse position = " << mousePos.x << " " << mousePos.y << std::endl;
                     #endif
@@ -182,10 +199,6 @@ int main() {
                     map.tileMap[height][width][layer] = addedTile;
                 }
             }
-
-        userInterface.UIPeriodic(&mousePos);
-
-
 
         Event event;
         while (tileWindow.pollEvent(event)) {
@@ -207,7 +220,9 @@ int main() {
             }
         }
 
-        if(mousePos.x > tileSelectorWindowStart.x && mousePos.y > UIHeight && Mouse::isButtonPressed(Mouse::Left)) {
+
+        //Detects what tile is being selected in the selector
+        if(mousePos.x > tileSelectorWindowStart.x && mousePos.y > UIHeight && leftClicked) {
             short tileHeight = std::floor((mousePos.y - tileSelectorWindowStart.y - UIHeight) / tileSize.y) ; 
             short tileWidth = std::floor((mousePos.x - tileSelectorWindowStart.x) / tileSize.x);
             #ifdef MOUSEDEBUG
@@ -216,7 +231,9 @@ int main() {
             addedTile = (tileHeight * 6) + tileWidth + 1;
         }
 
-
+        if(backgroundFileName != std::string()) {
+            deBackground.set(cameraPos);
+        }
 
 
         ts.tileSelect("Graphics/fakeTilePallet.png", tileSize, scrollPos, tileSelectorWindowStart, addedTile);
@@ -245,6 +262,10 @@ int main() {
 
         tileWindow.clear();
 
+
+        tileWindow.setView(backgroundView);
+
+        tileWindow.draw(deBackground);
 
         //Must come before userInterfaceView
         tileWindow.setView(tileView);

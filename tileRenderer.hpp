@@ -14,7 +14,10 @@ class tileRenderer : public sf::Drawable{
         sf::VertexArray foreGround;
         sf::VertexArray middleGround;
         sf::VertexArray backGround;
+
         sf::Texture tileTex;
+
+        sf::Vector2i windowSize;
         static const int mapHeight = 2000;
         static const int mapWidth = 2000;
         static const short height = 18;
@@ -82,6 +85,26 @@ class tileSelector : public sf::Drawable{
 
     private:
 
+        //Used to call window.draw(object) like an SFML entity
+        void draw(sf::RenderTarget& rtarget, sf::RenderStates states) const;
+};
+
+
+
+class background : public sf::Drawable {
+    protected:
+        sf::Vector2i windowSize;
+        sf::Texture backgroundTex;
+        sf::VertexArray actualBackground;
+        sf::Vector2i backgroundTextureSize = sf::Vector2i(512, 288);
+    public:
+        //Renders the background if called
+        background(std::string filename, sf::Vector2i window);
+
+
+        bool set(sf::Vector2i cameraPos);
+
+    private:
         //Used to call window.draw(object) like an SFML entity
         void draw(sf::RenderTarget& rtarget, sf::RenderStates states) const;
 };
