@@ -26,7 +26,9 @@ class tileRenderer : public sf::Drawable{
     public:
 
         //Only displays what can be seen on screen
-        unsigned short level[18][32][3];
+        unsigned short level[height][width][3];
+
+        bool collidableLevel[mapHeight][mapWidth];
 
         //Required for heap allocation of 3D array
         typedef unsigned short dimensions[tileRenderer::mapWidth][3];
@@ -53,6 +55,9 @@ class tileRenderer : public sf::Drawable{
 
         //Creates a new array of all ones
         bool newMap();
+
+        //Called for development to move all second layer tiles into a boolean array
+        void convertToColide();
 
     private:
 

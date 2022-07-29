@@ -13,10 +13,11 @@ int main() {
     unsigned short UIHeight = 12;
     short scrollPos = 0;
     short layer = 2;
+    short mouseHeight = 8;
     unsigned short addedTile = 2;
     //Required to differentiate UI drawing.  See userInterface.hpp for more details
     bool leftClicked;
-    sf::Clock clock;
+
     Vector2i tileFileResolution(640, 640);
     Vector2i tileSelectorWindowStart(514, 2);
     const Vector2i windowSize(612, 300);
@@ -145,6 +146,9 @@ int main() {
                     cameraPos.x = cameraPos.x + 16;
 
                 }
+                if(Keyboard::isKeyPressed(Keyboard::R)) {
+                    map.convertToColide();
+                }
 
 
 
@@ -190,7 +194,7 @@ int main() {
                     #ifdef MOUSEDEBUG
                         std::cout << "Mouse position = " << mousePos.x << " " << mousePos.y << std::endl;
                     #endif
-                    short height = (std::floor((mousePos.y  + cameraPos.y - UIHeight)/ tileSize.y)); 
+                    short height = (std::floor((mousePos.y  + cameraPos.y - UIHeight - mouseHeight)/ tileSize.y)); 
                     short width = (std::floor((mousePos.x + cameraPos.x)/ tileSize.x));
                     #ifdef MOUSEDEBUG
                         std::cout << "Width = " << width << " Height = " << height << std::endl;
@@ -235,7 +239,7 @@ int main() {
         }
 
 
-        ts.tileSelect("Graphics/fakeTilePallet.png", tileSize, scrollPos, tileSelectorWindowStart, addedTile);
+        ts.tileSelect("Graphics/TilePallet.png", tileSize, scrollPos, tileSelectorWindowStart, addedTile);
 
         //Loads the tileMap into the heap
         if (load) {
@@ -249,7 +253,7 @@ int main() {
             load = false;
         }
 
-        if (!map.renderTile("Graphics/fakeTilePallet.png", tileSize, cameraPos)) {
+        if (!map.renderTile("Graphics/TilePallet.png", tileSize, cameraPos)) {
 
                 std::cout << "ERROR FAILED TO RENDER TILEMAP\n";
 

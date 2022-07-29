@@ -20,7 +20,7 @@ class UI : public sf::Drawable {
         Button loadButton;
         Button editButton;
         Button backgroundButton;
-        short debouncer;
+        short debouncer = 0;
         tileRenderer* pTRender;
         bool wasClicked = false;
         short clickedIterations = 0;

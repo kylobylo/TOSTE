@@ -84,6 +84,7 @@ bool tileRenderer::renderTile(std::string fileName, sf::Vector2i tileSize, sf::V
                 midArray[1].texCoords = Vector2f((((level[h][w][1] - 1) % 40) * tileSize.x) + tileSize.x, 0.f + (tileSize.y * roundRow));
                 midArray[2].texCoords = Vector2f((((level[h][w][1] - 1) % 40) * tileSize.x) + tileSize.x, tileSize.y + (tileSize.y * roundRow));
                 midArray[3].texCoords = Vector2f(((level[h][w][1] - 1) % 40) * tileSize.x, tileSize.y + (tileSize.y * roundRow));
+
             }
         }
     }
@@ -151,6 +152,8 @@ bool tileRenderer::loadTile(std::string tilemapFile) {
         for(int h = 0; h < mapHeight; h++) {
             fs.read((char*)(*tileMap[h]), sizeof(*tileMap));
         }
+        
+        fs.read((char*)(collidableLevel), sizeof(collidableLevel));
         fs.close();
         return true;
     } else {
@@ -163,6 +166,27 @@ bool tileRenderer::loadTile(std::string tilemapFile) {
 
 };
 
+
+void tileRenderer::convertToColide() {
+
+    for(int h = 0; h < mapHeight; h++) {
+        for(int w = 0; w < mapWidth; w++) {
+            if(tileMap[h][w][1] == 1) {
+                collidableLevel[h][w] = false;
+            } else {
+                collidableLevel[h][w] = true;
+                #ifdef DEBUG
+                std::cout << collidableLevel[h][w];
+                #endif
+            }
+
+
+        }
+    }
+
+
+
+}
 
 
 bool tileRenderer::saveTile(std::string tilemapFile) {
@@ -178,6 +202,9 @@ bool tileRenderer::saveTile(std::string tilemapFile) {
         for(int h = 0; h < mapHeight; h++) {
             fs.write((char*)(tileMap[h]), sizeof(*tileMap));
         }
+
+        fs.write((char*)(collidableLevel), sizeof(collidableLevel));
+
         fs.close();
         return true;
     } else {
