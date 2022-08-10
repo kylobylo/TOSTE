@@ -20,12 +20,15 @@ UI::UI(tileRenderer* ptrTileRenderer, RenderWindow *window) {
 
     loadButton.setText("Load");
 
+    showCollidableButton.setText("Show Collidable");
+
     pTRender = ptrTileRenderer;
 
     fileButton.addButton(&saveButton);
     fileButton.addButton(&loadButton);
     fileButton.addButton(&newButton);
     editButton.addButton(&backgroundButton);
+    editButton.addButton(&showCollidableButton);
 
 
 
@@ -66,6 +69,10 @@ bool UI::UIPeriodic(){
         return false;
     } else if(newButton.buttonClicked(*pMousePos) && fileButton.menuOpened) {
         pTRender->newMap();
+        debouncer = 0;
+        return false;
+    } else if(showCollidableButton.buttonClicked(*pMousePos) && editButton.menuOpened)  {
+        pTRender->showColides =! pTRender->showColides;
         debouncer = 0;
         return false;
     } else if(Mouse::isButtonPressed(Mouse::Left) && debouncer > 10) {

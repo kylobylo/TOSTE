@@ -7,7 +7,7 @@ using namespace sf;
 
 int main() {
 
-    bool load = true;
+    bool load = false;
     bool focus = false;
     bool cursorGrabbed = false;
     unsigned short UIHeight = 12;
@@ -23,12 +23,12 @@ int main() {
     const Vector2i windowSize(612, 300);
 
     //Various click iterations which keep make the buttons work all the time.
-    short focusIterations;
+    short focusIterations = 0;
     bool wasFocused = false;
-    short grabIterations;
+    short grabIterations = 0;
     bool wasGrabbed = false;
 
-    RenderWindow tileWindow(VideoMode(windowSize.x, windowSize.y), "Tilemap editor");
+    RenderWindow tileWindow(VideoMode(windowSize.x, windowSize.y), "TOSTE");
     tileWindow.setFramerateLimit(60);
     View tileView(Vector2f(306, 144), Vector2f(612, 288));
     View backgroundView(Vector2f(306, 150), Vector2f(612, 300));
@@ -47,8 +47,6 @@ int main() {
     Texture cursorTexture;
 
     Vector2i cameraPos(0, 0);
-
-    Vector2i tileSize(16, 16);
 
     Vector2i mousePos(256, 156);
 
@@ -136,13 +134,13 @@ int main() {
                 if(Keyboard::isKeyPressed(Keyboard::Up) && cameraPos.y > 15 || Keyboard::isKeyPressed(Keyboard::W) && cameraPos.y > 15) {
                     cameraPos.y = cameraPos.y - 16;
                 }
-                if(Keyboard::isKeyPressed(Keyboard::Down) && cameraPos.y < 1985 * tileSize.y || Keyboard::isKeyPressed(Keyboard::S) && cameraPos.y < 1985 * tileSize.y) {
+                if(Keyboard::isKeyPressed(Keyboard::Down) && cameraPos.y < 1985 * tileSize || Keyboard::isKeyPressed(Keyboard::S) && cameraPos.y < 1985 * tileSize) {
                     cameraPos.y = cameraPos.y + 16;
                 }
                 if(Keyboard::isKeyPressed(Keyboard::Left) && cameraPos.x > 15 || Keyboard::isKeyPressed(Keyboard::A) && cameraPos.x > 15) {
                     cameraPos.x = cameraPos.x - 16;
                 }
-                if(Keyboard::isKeyPressed(Keyboard::Right) && cameraPos.x < 1985 * tileSize.x || Keyboard::isKeyPressed(Keyboard::D) && cameraPos.x < 1985 * tileSize.x) {
+                if(Keyboard::isKeyPressed(Keyboard::Right) && cameraPos.x < 1985 * tileSize || Keyboard::isKeyPressed(Keyboard::D) && cameraPos.x < 1985 * tileSize) {
                     cameraPos.x = cameraPos.x + 16;
 
                 }
@@ -180,13 +178,18 @@ int main() {
                     map.newMap();
                 }
 
+                if(Keyboard::isKeyPressed(Keyboard::LControl) && Keyboard::isKeyPressed(Keyboard::C)) {
+                    map.showColides = !map.showColides;
+                }
+
+
                 mousePos = userInterface.mousePos;
 
                 cursor.setPosition(mousePos.x, mousePos.y);
 
 
                 #ifdef MOUSEDEBUG
-                    std::cout << "Current Mouse Pos: " << Mouse::getPosition().x << ", " << Mouse::getPosition().y << std::endl;
+                    std::cout << "Current Mouse Pos: " << Mouse::getPosition() << ", " << Mouse::getPosition() << std::endl;
                 #endif
 
                 //Checks what tile the mouse is on for the drawer
@@ -194,12 +197,17 @@ int main() {
                     #ifdef MOUSEDEBUG
                         std::cout << "Mouse position = " << mousePos.x << " " << mousePos.y << std::endl;
                     #endif
-                    short height = (std::floor((mousePos.y  + cameraPos.y - UIHeight - mouseHeight)/ tileSize.y)); 
-                    short width = (std::floor((mousePos.x + cameraPos.x)/ tileSize.x));
+                    short height = (std::floor((mousePos.y  + cameraPos.y - UIHeight - mouseHeight)/ tileSize)); 
+                    short width = (std::floor((mousePos.x + cameraPos.x)/ tileSize));
                     #ifdef MOUSEDEBUG
                         std::cout << "Width = " << width << " Height = " << height << std::endl;
                     #endif
                     map.tileMap[height][width][layer] = addedTile;
+                    if (layer == 1 && addedTile != 1) {
+                        map.collidableMap[height][width] = true;
+                    } else if(layer == 1 && addedTile == 1) {
+                        map.collidableMap[height][width] = false;
+                    }
                 }
             }
 
@@ -226,8 +234,8 @@ int main() {
 
         //Detects what tile is being selected in the selector
         if(mousePos.x > tileSelectorWindowStart.x && mousePos.y > UIHeight && leftClicked) {
-            short tileHeight = std::floor((mousePos.y - tileSelectorWindowStart.y - UIHeight) / tileSize.y) ; 
-            short tileWidth = std::floor((mousePos.x - tileSelectorWindowStart.x) / tileSize.x);
+            short tileHeight = std::floor((mousePos.y - tileSelectorWindowStart.y - UIHeight) / tileSize) ; 
+            short tileWidth = std::floor((mousePos.x - tileSelectorWindowStart.x) / tileSize);
             #ifdef MOUSEDEBUG
                 std::cout << "Mouse tilePosition: " << tileHeight << ", " << tileWidth << std::endl;
             #endif
@@ -239,7 +247,7 @@ int main() {
         }
 
 
-        ts.tileSelect("Graphics/TilePallet.png", tileSize, scrollPos, tileSelectorWindowStart, addedTile);
+        ts.tileSelect("Graphics/TilePallet.png", scrollPos, tileSelectorWindowStart, addedTile);
 
         //Loads the tileMap into the heap
         if (load) {
@@ -253,7 +261,7 @@ int main() {
             load = false;
         }
 
-        if (!map.renderTile("Graphics/TilePallet.png", tileSize, cameraPos)) {
+        if (!map.renderTile("Graphics/TilePallet.png", cameraPos)) {
 
                 std::cout << "ERROR FAILED TO RENDER TILEMAP\n";
 

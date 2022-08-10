@@ -5,7 +5,7 @@
 #include <algorithm>
 #pragma once
 
-
+inline unsigned short tileSize = 16;
 
 class tileRenderer : public sf::Drawable{
     protected:
@@ -14,6 +14,15 @@ class tileRenderer : public sf::Drawable{
         sf::VertexArray foreGround;
         sf::VertexArray middleGround;
         sf::VertexArray backGround;
+
+
+
+
+        //used for drawing collidable boxes
+        sf::VertexArray tops;
+        sf::VertexArray rights;
+        sf::VertexArray bottoms;
+        sf::VertexArray lefts;
 
         sf::Texture tileTex;
 
@@ -25,10 +34,17 @@ class tileRenderer : public sf::Drawable{
 
     public:
 
+        bool showColides = false;
+
+
         //Only displays what can be seen on screen
         unsigned short level[height][width][3];
 
-        bool collidableLevel[mapHeight][mapWidth];
+        typedef bool boolRay[mapWidth];
+
+        boolRay* collidableMap = new boolRay[mapHeight];
+
+        bool collidableLevel[height][width];
 
         //Required for heap allocation of 3D array
         typedef unsigned short dimensions[tileRenderer::mapWidth][3];
@@ -42,10 +58,10 @@ class tileRenderer : public sf::Drawable{
 
 
         //Transition tile IDs from map to level
-        bool windowPos(sf::Vector2i cameraPos, sf::Vector2i tileSize);
+        bool windowPos(sf::Vector2i cameraPos);
 
         /*Creates a tile map with a foreground, middle ground, and background*/
-        bool renderTile(std::string fileName, sf::Vector2i tileSize, sf::Vector2i cameraPos); 
+        bool renderTile(std::string fileName, sf::Vector2i cameraPos); 
 
         /*loads the tilesmaps stored in binary and runs renderTile*/
         bool loadTile(std::string tilemapFile);
@@ -58,6 +74,9 @@ class tileRenderer : public sf::Drawable{
 
         //Called for development to move all second layer tiles into a boolean array
         void convertToColide();
+
+        //Outlines all collidable tiles and is toggleable
+        void showCollidables();
 
     private:
 
@@ -84,9 +103,9 @@ class tileSelector : public sf::Drawable{
     public:
 
         //Render the tile Selector
-        bool tileSelect(std::string fileName, sf::Vector2i tileSize, short scrollPos, sf::Vector2i windowStart, int tileNumber);
+        bool tileSelect(std::string fileName, short scrollPos, sf::Vector2i windowStart, int tileNumber);
 
-        int selectTile(int tileNumber, sf::Vector2i tileSize, short scrollPos, sf::Vector2i windowStart);
+        int selectTile(int tileNumber, short scrollPos, sf::Vector2i windowStart);
 
     private:
 
@@ -113,3 +132,4 @@ class background : public sf::Drawable {
         //Used to call window.draw(object) like an SFML entity
         void draw(sf::RenderTarget& rtarget, sf::RenderStates states) const;
 };
+
