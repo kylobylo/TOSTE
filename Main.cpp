@@ -159,7 +159,7 @@ int main() {
 
                 //Quick Save tileMap
                 if(Keyboard::isKeyPressed(Keyboard::LControl) && Keyboard::isKeyPressed(Keyboard::S)) {
-                    if(!map.saveTile("level.dat")) {
+                    if(!map.saveTile(binarySavePath)) {
                         std::cout << "ERROR SAVING FILE, PLEASE TRY AGAIN AND MAKE SURE PROGRAM HAS PERMISSIONS\n";
                     }else {
                         std::cout << "FILE SAVED\n";
@@ -251,7 +251,7 @@ int main() {
 
         //Loads the tileMap into the heap
         if (load) {
-            if (!map.loadTile("level.dat")) {
+            if (!map.loadTile(binarySavePath)) {
                 #ifdef DEBUG
                     std::cout << "ERROR FAILED TO LOAD MAP\n";
                 #endif

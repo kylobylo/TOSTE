@@ -38,7 +38,7 @@ bool tileRenderer::renderTile(std::string fileName, sf::Vector2i cameraPos) {
 
             if (level[h][w][0] != 0) {
 
-                //Used to transotopm from row to row on texture file
+                //Used to transfer from row to row on texture file
                 unsigned short roundRow = std::floor(((level[h][w][0] - 1) / 40));
 
                 //Assign vectors to draw lines between
@@ -205,6 +205,21 @@ void tileRenderer::draw(sf::RenderTarget& rtarget, sf::RenderStates states) cons
     }
 
 };
+
+bool tileRenderer::saveToPNG() {
+    RenderTexture rtarget;
+    if(!rtarget.create(mapHeight, mapWidth)){
+        std::cout << "ERROR FAILED TO CREATE TEXTURE\n";
+        return false;
+    }
+
+    
+    rtarget.draw(*this);
+    rtarget.display();
+    rtarget.getTexture().copyToImage().saveToFile(pngSavePath);
+
+    return true;
+}
 
 bool tileRenderer::loadTile(std::string tilemapFile) {
 

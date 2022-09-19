@@ -17,6 +17,10 @@ UI::UI(tileRenderer* ptrTileRenderer, RenderWindow *window) {
     
     saveButton.setText("Save");
 
+    saveAsButton.setText("Save As");
+
+    saveAsPNGButton.setText("Export");
+
 
     loadButton.setText("Load");
 
@@ -27,6 +31,8 @@ UI::UI(tileRenderer* ptrTileRenderer, RenderWindow *window) {
     fileButton.addButton(&saveButton);
     fileButton.addButton(&loadButton);
     fileButton.addButton(&newButton);
+    fileButton.addButton(&saveAsPNGButton);
+    fileButton.addButton(&saveAsButton);
     editButton.addButton(&backgroundButton);
     editButton.addButton(&showCollidableButton);
 
@@ -71,7 +77,42 @@ bool UI::UIPeriodic(){
         pTRender->newMap();
         debouncer = 0;
         return false;
-    } else if(showCollidableButton.buttonClicked(*pMousePos) && editButton.menuOpened)  {
+    } else if(saveAsButton.buttonClicked(*pMousePos) && fileButton.menuOpened) {
+        #ifdef LINUX
+        //Prompts gnome file selection window
+        char tempPath[1024];
+        FILE *f = popen("zenity --file-selection --save", "r");
+        fgets(tempPath, 1024, f);
+
+        binarySavePath = "";
+
+        for(int i = 0; i<1024 ;i++) {
+            binarySavePath + tempPath[i];
+        }
+
+        pTRender->saveTile(binarySavePath);
+        return false;
+        #endif
+
+        #ifdef WINDOWS
+
+        //prompts windows file selection window
+
+         std::cout << "Sorry this feature is not implemented on windows yet\n";
+         return false;
+        #endif
+
+
+
+        std::cout << "ERROR: COMPILED WITH NO OS SETTING!!\n";
+        return false;
+
+    } else if(saveAsPNGButton.buttonClicked(*pMousePos) && fileButton.menuOpened) {
+        pTRender->saveToPNG();
+        debouncer = 0;
+        return false;
+    } 
+    else if(showCollidableButton.buttonClicked(*pMousePos) && editButton.menuOpened)  {
         pTRender->showColides =! pTRender->showColides;
         debouncer = 0;
         return false;

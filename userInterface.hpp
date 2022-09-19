@@ -4,6 +4,9 @@
 #include <math.h>
 #include "Button.hpp"
 #include "tileRenderer.hpp"
+#ifdef WINDOWS
+    #include <windows.h>
+#endif
 #pragma once
 
 
@@ -18,7 +21,9 @@ class UI : public sf::Drawable {
         Button newButton;
         Button saveButton;
         Button loadButton;
+        Button saveAsButton;
         Button editButton;
+        Button saveAsPNGButton;
         Button backgroundButton;
         Button showCollidableButton;
         short debouncer = 0;

@@ -70,7 +70,7 @@ void Button::addButton(Button *ptr) {
     subButtons.push_back(*ptr);
 
     if(subMenuWidth < ptr->boundingBox.width) {
-        widthFit = ptr->boundingBox.width - subMenuWidth + 5/*I'll put this here for some space on the end*/;
+        subMenuWidth += ptr->boundingBox.width - subMenuWidth + 5/*I'll put this here for some space on the end*/;
     }
 
     subMenu[0].position = Vector2f(boundingBox.left - 1, height);

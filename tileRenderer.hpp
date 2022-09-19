@@ -7,6 +7,10 @@
 
 inline unsigned short tileSize = 16;
 
+inline std::string binarySavePath = "Level.dat";
+
+inline std::string pngSavePath = "Level.png";
+
 class tileRenderer : public sf::Drawable{
     protected:
 
@@ -14,8 +18,6 @@ class tileRenderer : public sf::Drawable{
         sf::VertexArray foreGround;
         sf::VertexArray middleGround;
         sf::VertexArray backGround;
-
-
 
 
         //used for drawing collidable boxes
@@ -77,6 +79,8 @@ class tileRenderer : public sf::Drawable{
 
         //Outlines all collidable tiles and is toggleable
         void showCollidables();
+
+        bool saveToPNG();
 
     private:
 
